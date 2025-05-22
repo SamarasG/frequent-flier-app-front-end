@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
+    const history = useHistory();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        setSuccess('');
-
         try {
-            const response = await axios.post('/api/login', { email, password });
-            setSuccess('Login successful!');
-            // Handle successful login (e.g., redirect or update context)
-        } catch (err) {
-            setError('Login failed. Please check your credentials.');
+            const response = await axios.post(`/users/login?email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+            if (response.status === 200) {
+                if (response.data.token) {
+                    localStorage.setItem('token', response.data.token);
+                }
+                history.push('/home');
+            }
+        } catch (err: any) {
+            if (err.response && err.response.status === 401) {
+                setError('Invalid credentials. Please try again.');
+            } else {
+                setError('Login failed. Please try again.');
+            }
         }
     };
 
@@ -46,7 +53,6 @@ const Login: React.FC = () => {
                 <button type="submit">Login</button>
             </form>
             {error && <p className="error">{error}</p>}
-            {success && <p className="success">{success}</p>}
         </div>
     );
 };

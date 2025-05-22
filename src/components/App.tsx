@@ -1,11 +1,10 @@
 import React from 'react';
 import AppRoutes from '../routes/AppRoutes';
-import '../styles/App.css'; // Correct path to styles folder
+import '../styles/App.css'; 
 
 const App: React.FC = () => {
     return (
         <div className="App">
-            <h1>Welcome to My React App</h1>
             <AppRoutes />
         </div>
     );
